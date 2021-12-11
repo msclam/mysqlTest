@@ -81,7 +81,7 @@ where
 	like
 	between and
 	in
-	is null
+	is null  || is not null
 */
 
 # 一 按照条件表达式筛选
@@ -93,6 +93,60 @@ SELECT last_name, department_id
 FROM employees
 WHERE department_id <> 90;
 
-# 二 按照逻辑表达式
+# 二 按照逻辑表达式筛选
+# case 1 查询工资在10000到20000之间员工的名字、工资以及奖金
+SELECT 
+	last_name, salary, commission_pct
+FROM employees
+WHERE salary >= 10000 AND salary <= 20000;
 
+# case 2 查询部门编号不在90到110之间，或者工资高于15000的员工信息
+SELECT 
+	*
+FROM employees
+WHERE NOT(department_id >= 90 AND department_id <= 110) OR salary > 15000;
 
+# 三 模糊查询
+/*
+like： 一般和通配符搭配使用
+% 代表任意多个字符（包含0个字符）
+_ 代表任意单个字符
+between and
+in
+is null || is not null
+*/
+
+# case 1 like   查询员工名字中包含字符a的员工信息
+SELECT 
+	*
+FROM 
+	employees
+WHERE 
+	last_name LIKE '%a%';
+
+# case 2 查询员工名字中第三个字符为e,第五个字符为a的员工名和工资
+SELECT 
+	last_name,
+	salary
+FROM 
+	employees
+WHERE 
+	last_name LIKE '__n_l%';
+
+# case 3 查询员工名字中第三个字符为_的员工名 （需要转义方式）
+SELECT 
+	last_name
+FROM
+	employees
+WHERE
+	last_name LIKE '__\_%';
+# 	last_name LIKE '__$_%' escape '$';
+
+# case 4 between and
+# 查询员工编号在100到200之间的员工信息
+SELECT 
+	*
+FROM 
+	employees
+# where employee_id >= 100 and employee_id <= 200;
+WHERE employee_id BETWEEN 100 AND 200;

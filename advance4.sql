@@ -9,6 +9,9 @@ select 函数名(实参列表) from 表
 */
 # 一 字符函数
 # 1、length 获取参数值的字节数
+
+USE myemployees;
+
 SELECT LENGTH('john');
 SELECT LENGTH('中国人ababab'); # 汉字三个字节
 SHOW VARIABLES LIKE '%char%';
@@ -61,3 +64,50 @@ SELECT ROUND(1.567, 2); # 小数点后两位
 SELECT CEIL(-1.02);
 
 # 3 floor
+SELECT FLOOR(-9.99);
+
+# 4 truncate 截断
+SELECT TRUNCATE(1.6900, 1);
+
+# 5 mod 取余 被除数为正就是正，为负数就负数
+# mod => a-a/b*b
+SELECT MOD(-10, 3);
+ 
+# 三 日记函数
+# 1 now 返回当前系统日期+时间
+SELECT NOW(); 
+
+# 2 curdate 返回系统日期，不包含时间
+SELECT CURDATE();
+
+# 3 curtime 返回当前时间，不包含日期
+SELECT CURTIME();
+
+# 4 可以获取指定的部分年月日时分秒
+SELECT YEAR(NOW()) 年;
+SELECT YEAR('1998-1-1') 年;
+SELECT YEAR(hiredate) AS 年 FROM employees;
+
+SELECT MONTH(NOW()) 月;
+SELECT MONTHNAME(NOW()) 月;
+
+# 5 str_to_date 将字符转为日期
+SELECT STR_TO_DATE('1998-3-2', '%Y-%m-%d') AS out_put;
+
+# 查询入职日期为1992-4-3的员工信息
+SELECT * FROM employees WHERE hiredate = '1992-4-3';
+SELECT * FROM employees WHERE hiredate = STR_TO_DATE('4-3 1992', '%c-%d %Y');
+
+
+# date_format 将日期转换为字符
+SELECT DATE_FORMAT(NOW(), '%y年%m月%d日') AS out_put;
+
+# 查询有奖金的员工名和入职日期(xx月/xx日 xx年)
+SELECT last_name, DATE_FORMAT(hiredate, '%m月/%d日 %y年') AS 入职日期
+FROM employees
+WHERE commission_pct IS NOT NULL;
+
+# 四、其他函数
+SELECT VERSION();
+SELECT DATABASE();
+SELECT USER();

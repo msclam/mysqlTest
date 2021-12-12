@@ -1,4 +1,5 @@
 # 练习1
+USE myemployees;
 # 1 显示表中全部列，各列使用逗号连接，列头为out put
 SELECT IFNULL(commission_pct, 0) AS 奖金率,
 	commission_pct

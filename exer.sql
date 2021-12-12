@@ -1,5 +1,5 @@
 # 练习1
-# 显示表中全部列，各列使用逗号连接，列头为out put
+# 1 显示表中全部列，各列使用逗号连接，列头为out put
 SELECT IFNULL(commission_pct, 0) AS 奖金率,
 	commission_pct
 FROM employees;
@@ -14,7 +14,7 @@ SELECT
 	salary * 12 * (1 + IFNULL(commission_pct, 0)) AS 年薪
 FROM employees;
 
-# 查询没有奖金，且工资小于18000的salary，last_name
+# 3 查询没有奖金，且工资小于18000的salary，last_name
 SELECT 
 	salary, last_name
 FROM 
@@ -22,7 +22,7 @@ FROM
 WHERE commission_pct IS NULL AND salary < 180000;
 
 
-# 查询job_id不为"IT"或者工资为12000的员工信息
+# 4 查询job_id不为"IT"或者工资为12000的员工信息
 SELECT * FROM employees WHERE job_id <> "IT" OR salary = 12000;
 
 # 经典面试题
@@ -31,3 +31,18 @@ SELECT * FROM employees;
 SELECT * FROM employees WHERE commission_pct LIKE '%%' OR last_name LIKE '%%';
 # 上面和下 不同
 SELECT * FROM employees WHERE commission_pct LIKE '%%' AND last_name LIKE '%%';
+
+
+# 练习2 
+# 1 查询员工的姓名和部门号和年薪，按年薪降序，按姓名升序
+SELECT last_name, department_id, salary * 12 * (1 + IFNULL(commission_pct, 0)) AS 年薪
+FROM employees
+ORDER BY 年薪 DESC, last_name ASC;
+
+# 2 选择工资不在8000到17000的员工的姓名和工资，按工资降序
+SELECT last_name, salary
+FROM employees
+WHERE salary NOT BETWEEN 8000 AND 17000
+ORDER BY salary DESC;
+
+# 3 查询邮箱中包含

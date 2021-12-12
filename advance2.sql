@@ -1,66 +1,3 @@
-/*
-进阶1 基础查询
-语法：
-select 查询列表 from 表名
-
-查询列表是： 表中字段、常量值、表达式、函数
-类似 System.out.println()
-*/
-USE myemployees;
-
-# 0 显示表结构
-DESC departments;
-
-# 1 查询表中单个字段
-SELECT last_name FROM employees;
-
-# 2 查询表中多个字段
-SELECT department_name, department_id FROM departments;
-
-# 3 查询表中所有字段 f12格式化代码
-SELECT * FROM departments;
-SELECT `department_name` FROM departments;
-
-# 4 查询常量值
-SELECT 100 AS 结果;
-SELECT 'abc';
-
-# 5 查询表达式
-SELECT 100%98
-
-# 6 查询函数
-SELECT VERSION();
-
-# 7 为字段起别名
-# 方式一 as
-SELECT last_name AS 性, first_name AS 名 FROM employees;
-
-# 方式二 空格代替as
-SELECT last_name 性, first_name 名 FROM employees;
-
-# 案例： 有空格的别名要加""或者''
-SELECT salary AS "out put" FROM employees;
-
-# 8 去重复 distinct
-SELECT DISTINCT department_id FROM employees;
-
-# 9 +的作用(mysql的+只有运算作用)
-/*
-select 100+90
-select '90'+100 字符转为数字
-select 'john'+90 字符无法转，直接为0
-select null + 10 只要有一个为null，结果为null
-*/
-SELECT NULL + 100;
-
-# 性和名合并显示？
-# select last_name+first_name as 姓名
-# from employees;
-
-SELECT CONCAT(last_name, first_name) AS 姓名
-FROM employees;
-
-
 # 进阶2 条件查询
 /*
 select 
@@ -83,7 +20,7 @@ where
 	in
 	is null  || is not null
 */
-
+USE myemployees;
 # 一 按照条件表达式筛选
 # case 1 查询工资>12000的员工信息
 SELECT * FROM employees WHERE salary > 12000;
@@ -116,6 +53,7 @@ in
 is null || is not null
 */
 
+# （一）like的使用
 # case 1 like   查询员工名字中包含字符a的员工信息
 SELECT 
 	*
@@ -142,6 +80,7 @@ WHERE
 	last_name LIKE '__\_%';
 # 	last_name LIKE '__$_%' escape '$';
 
+# （二）between and的使用
 # case 4 between and
 # 查询员工编号在100到200之间的员工信息
 SELECT 
@@ -150,3 +89,49 @@ FROM
 	employees
 # where employee_id >= 100 and employee_id <= 200;
 WHERE employee_id BETWEEN 100 AND 200;
+
+# （三）in的使用
+# case 5  in 判断某字段的值是否在in列表中的某一项(in 列表的值类型必须一致或者可转换转换('123' 123))
+# 查询员工工种编号为IT_PROG、AD_Vp、AD_PRES中的员工名和工种编号
+SELECT 
+	last_name,
+	job_id
+FROM 
+	employees
+WHERE 
+#	job_id = 'IT_PROG' or job_id = 'AD_Vp' or job_id = 'AD_PRES';
+	job_id	IN ('IT_PROG', 'AD_Vp','AD_PRES'); 
+	
+# （四）is null 仅仅可以判断null值，但是<=>可以判断null值和普通的数值
+# case 6 查询没有奖金的员工名和奖金率
+SELECT 
+	last_name,
+	commission_pct
+FROM 	
+	employees
+WHERE commission_pct IS NULL;
+
+# case 7 查询有奖金的员工名和奖金率
+SELECT 
+	last_name,
+	commission_pct
+FROM 	
+	employees
+WHERE commission_pct IS NOT NULL;
+
+# 安全等于 <=>
+SELECT 
+	last_name,
+	commission_pct
+FROM 	
+	employees
+WHERE commission_pct <=> NULL;
+
+#-----------------------------
+SELECT 
+	last_name,
+	salary
+FROM 	
+	employees
+WHERE salary <=> 12000
+

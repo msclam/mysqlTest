@@ -10,6 +10,7 @@ order by 排序列表 [asc | desc]
 	2、orderby 后可以加字段、多个字段、表达式、函数、别名
 	3、一般放子句最后，limit除外
 */
+USE myemployees;
 # case 1 查询员工信息，要求工资从高到低
 SELECT * FROM employees ORDER BY salary DESC;
 SELECT * FROM employees ORDER BY salary ASC;

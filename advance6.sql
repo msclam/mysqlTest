@@ -276,20 +276,60 @@ WHERE e.`last_name` LIKE '%k%';
 
 # 二、外连接
 /*
-用于一个表
+用于一个表中有，另一个表没有的记录
+
+1、外连接的查询结果为主表的所有记录
+	如果从表有和它匹配的，则先显示匹配的值
+	如果从表没有匹配的，则显示null
+	外连接 = 内连接结果 + 主表有而从表没有的记录
+2、左外连接：left join 左边是主表
+   右外连接：right join 右边是主表
+3、左外和右外交换两表顺序，可以实现同样的效果 
+4、全外连接 = 内连接 + 表1有表2没有+表2有但表1没有
 */
-# 查询男朋友名字不在男生表中的女名字
+# case 1 查询男朋友名字不在男生表中的女名字
+USE girls;
+SELECT b.name, bo.*
+FROM beauty b
+LEFT OUTER JOIN boys bo
+ON b.`boyfriend_id`=bo.`id`;
+
+USE girls;
+SELECT b.name
+FROM beauty b
+LEFT OUTER JOIN boys bo
+ON b.`boyfriend_id`=bo.`id`
+WHERE bo.`id` IS NULL;
 
 
+# case 2 查询哪个部门没有员工
+# 左外
+SELECT d.*, e.employee_id
+FROM departments d
+LEFT OUTER JOIN employees e
+ON d.`department_id` = e.`department_id`
+WHERE e.`employee_id` IS NULL;
+
+# 右外
+SELECT d.*, e.employee_id
+FROM employees e
+LEFT OUTER JOIN departments d
+ON d.`department_id` = e.`department_id`
+WHERE e.`employee_id` IS NULL;
+
+# 全外
+USE girls;
+SELECT b.*, bo.*
+FROM beauty b
+FULL OUTER JOIN boys bo
+ON b.`boyfriend_id` = bo.id;
 
 
-
-
-
-
-
-
-
+# 交叉连接(笛卡尔乘积)
+USE girls;
+SELECT b.*, bo.*
+FROM beauty b
+CROSS JOIN boys bo;
 
 
 

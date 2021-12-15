@@ -224,3 +224,28 @@ SELECT e.last_name employees, e.employee_id "Emp#", m.last_name manager, m.emplo
 FROM employees e, employees m
 WHERE e.manager_id = m.employee_id
 AND e.last_name = 'kochhar'; 
+
+
+# 七 练习
+# case 1 查询编号>3号女生的男朋友信息，如果有则列出详细，如果没有，用null填充
+SELECT b.id, b.name, bo.*
+FROM beauty b
+LEFT OUTER JOIN boys bo
+ON b.`boyfriend_id`=bo.`id`
+WHERE b.id > 3;	
+
+# case 2 查询哪个城市没有部门
+USE myemployees;
+SELECT city, d.*
+FROM departments d
+RIGHT OUTER JOIN locations l
+ON d.`location_id`=l.`location_id`
+WHERE d.`department_id` IS NULL;
+
+# case 3 查询部门名为SAL或IT的员工信息
+USE myemployees;
+SELECT e.*, d.department_name
+FROM departments d
+LEFT JOIN employees e
+ON d.`department_id` = e.`department_id`
+WHERE d.`department_name` IN ('SAL', 'IT');

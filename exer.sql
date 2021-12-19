@@ -251,7 +251,7 @@ ON d.`department_id` = e.`department_id`
 WHERE d.`department_name` IN ('SAL', 'IT');
 
 
-# 八 练习
+# 八 练习 子查询
 # case 1 查询和员工Zlotkey相同部门的员工姓名和工资
 SELECT department_id
 FROM employees
@@ -277,10 +277,12 @@ WHERE salary > (
 );
 
 # case 3 查询各部门中工资比本部门平均工资高的员工的员工号，姓名和工资
+# 查询各部门的平均工资
 SELECT AVG(salary), department_id
 FROM employees
 GROUP BY department_id;
 
+# 连接子查询和大表employees
 SELECT employee_id, last_name, salary, e.`department_id`
 FROM employees e
 INNER JOIN (
@@ -290,3 +292,119 @@ INNER JOIN (
 ) ag_dep
 ON e.`department_id` = ag_dep.department_id
 WHERE salary > ag_dep.ag;
+
+# case 4 查询和姓名中包含字母u的员工在相同部门的员工的员工号和姓名
+# 查询姓名中包含字母u的员工所在部门
+SELECT DISTINCT department_id
+FROM employees
+WHERE last_name LIKE '%u%';
+
+# 查询部门号=上条件的任意一个的员工号和姓名
+SELECT last_name, employee_id
+FROM employees
+WHERE department_id IN (
+	SELECT DISTINCT department_id
+	FROM employees
+	WHERE last_name LIKE '%u%'
+);
+
+# case 5 查询所在部门的location_id为1700的部门工作的员工的员工号
+SELECT DISTINCT department_id
+FROM departments
+WHERE location_id=1700;
+
+# 使用in
+SELECT employee_id
+FROM employees
+WHERE department_id IN (
+	SELECT DISTINCT department_id
+	FROM departments
+	WHERE location_id=1700
+);
+
+# 使用any
+SELECT employee_id
+FROM employees
+WHERE department_id = ANY (
+	SELECT DISTINCT department_id
+	FROM departments
+	WHERE location_id=1700
+);
+
+# case 6 查询管理者为King的员工姓名和工资
+# 查询姓名为King的员工编号
+SELECT employee_id
+FROM employees
+WHERE last_name = 'K_ing';
+
+SELECT last_name, salary
+FROM employees
+WHERE manager_id IN (
+	SELECT employee_id
+	FROM employees
+	WHERE last_name = 'K_ing'
+);
+
+# case 7 查询工资最高的员工的姓名，要求first_name和last_name显示为一列，列名是姓名
+SELECT MAX(salary) 
+FROM employees;
+
+SELECT CONCAT(first_name, last_name) AS "姓.名"
+FROM employees
+WHERE salary = (
+	SELECT MAX(salary) 
+	FROM employees
+);
+
+# 九 练习 
+/*
+已知表 stuinfo
+id 学号
+name 性名
+email 邮箱 john@126.com
+gradeId 年级编号
+sex 性别 男 女
+age 年纪
+
+已知表 grade
+id 年级编号
+gradeName 年级名称
+*/
+
+# case 1 查询所有学院的邮箱的用户名（注意邮箱有@）
+SELECT SUBSTR(email, 1, INSTR(email, '@') - 1) 用户名
+FROM stuinfo;
+
+# case 2 查询男生和女生的个数
+SELECT COUNT(*), sex
+FROM stuinfo
+GROUP BY sex;
+
+# case 3 查询年龄>18岁的所有学生的姓名和年级名称
+SELECT `name`, gradeName
+FROM stuinfo s
+INNER JOIN grade g
+ON s.gradeId = g.id
+WHERE age > 18;
+
+# case 4 查询哪个年级的学生的最小年龄>20岁
+# 插叙每个年级最小年龄
+SELECT MIN(age), gardeId
+FROM stuinfo
+GROUP BY gradeId;
+
+SELECT MIN(age), gardeId
+FROM stuinfo
+GROUP BY gradeId
+HAVING MIN(age) > 20;
+
+# case 5 说出查询语句中设计到的所有的关键字，以及执行的先后顺序
+SELECT 查询列表     7
+FROM 表             1
+连接类型 JOIN 表2   2
+ON 连接条件         3
+WHERE 筛选条件      4
+GROUP BY 分组列表   5
+HAVING 分组后的筛选 6
+ORDER BY 排序列表   8
+LIMIT 偏移, 条目数; 9

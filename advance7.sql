@@ -284,3 +284,4 @@ FROM beauty b
 LEFT JOIN boys bo
 ON b.`boyfriend_id`=bo.`id`
 WHERE bo.`id` IS NOT NULL;
+

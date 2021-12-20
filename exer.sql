@@ -410,3 +410,222 @@ HAVING 分组后的筛选 6
 ORDER BY 排序列表   8
 LIMIT 偏移, 条目数; 9
 */
+
+SELECT PASSWORD('root');
+SELECT MD5('root');
+
+
+# 十 练习
+
+# case 1 查询工资最低的员工信息:last_name salary
+# 方式一
+SELECT MIN(salary) 
+FROM employees;
+
+SELECT last_name, salary
+FROM employees
+WHERE salary IN (
+	SELECT MIN(salary) 
+	FROM employees
+);
+
+# case 2 查询平均工资最低的部门信息
+# 1各部门平均工资
+SELECT AVG(salary), department_id
+FROM employees
+GROUP BY department_id;
+
+# 2查询1结果的最低平均工资
+SELECT MIN(ag)
+FROM (
+	SELECT AVG(salary) ag, department_id
+	FROM employees
+	GROUP BY department_id
+) ag_dep;
+
+# 3查询哪个部门平均工资=2
+SELECT AVG(salary), department_id
+FROM employees 
+GROUP BY department_id
+HAVING AVG(salary) = (
+	SELECT MIN(ag)
+	FROM (
+		SELECT AVG(salary) ag, department_id
+		FROM employees
+		GROUP BY department_id
+	) ag_dep
+);
+
+# 4查询部门信息
+SELECT d.*
+FROM departments d
+WHERE d.`department_id` = (
+	SELECT department_id
+	FROM employees
+	GROUP BY department_id
+	HAVING AVG(salary) = (
+		SELECT MIN(ag)
+		FROM (
+			SELECT AVG(salary) ag, department_id
+			FROM employees
+			GROUP BY department_id
+		) ag_dep
+	)
+);
+
+# 方式二
+# 1 各部门的平均工资
+SELECT AVG(salary), department_id
+FROM employees
+GROUP BY department_id;
+
+# 2 求出最低平均工资的部门编号
+SELECT department_id, AVG(salary)
+FROM employees
+GROUP BY department_id
+ORDER BY AVG(salary)
+LIMIT 1;
+
+# 3 查出部门信息
+SELECT *
+FROM departments
+WHERE department_id=(
+	SELECT department_id
+	FROM employees
+	GROUP BY department_id
+	ORDER BY AVG(salary)
+	LIMIT 1
+);
+
+
+# case3 查询平均工资最低的部门信息和该部门的平均工资
+# 查各部门平均工资
+SELECT AVG(salary), department_id
+FROM employees
+GROUP BY department_id;
+
+# 最低平均工资的部门编号
+SELECT AVG(salary), department_id
+FROM employees
+GROUP BY department_id
+ORDER BY AVG(salary)
+LIMIT 1;
+
+# 查部门信息
+SELECT d.*, ag
+FROM departments d
+JOIN (
+	SELECT AVG(salary) ag, department_id
+	FROM employees
+	GROUP BY department_id
+	ORDER BY AVG(salary)
+	LIMIT 1
+) ag_dep
+ON d.department_id = ag_dep.department_id;
+
+
+# case 4 查询平均工资最高的job信息
+SELECT AVG(salary), job_id
+FROM employees
+GROUP BY job_id
+ORDER BY AVG(salary) DESC
+LIMIT 1;
+
+SELECT *
+FROM jobs
+WHERE job_id = (
+	SELECT job_id
+	FROM employees
+	GROUP BY job_id
+	ORDER BY AVG(salary) DESC
+	LIMIT 1
+);
+
+# case 5 查询平均工资高于公司平均工资的部门
+# 查询公司平均工资
+SELECT AVG(salary) 
+FROM employees
+
+# 查询每个部门的平均工资
+SELECT AVG(salary), department_id
+FROM employees
+GROUP BY department_id;
+
+SELECT AVG(salary), department_id
+FROM employees
+GROUP BY department_id
+HAVING AVG(salary) > (
+	SELECT AVG(salary) 
+	FROM employees
+);
+
+
+# case 6 查询公司中所有manager的详细信息
+# 查询所有manager的员工编号
+SELECT DISTINCT manager_id
+FROM employees;
+
+# 查询详细信息
+SELECT *
+FROM employees
+WHERE employee_id IN (
+	SELECT DISTINCT manager_id
+	FROM employees
+);
+
+# 方式二
+SELECT *
+FROM employees
+WHERE employee_id = ANY (
+	SELECT DISTINCT manager_id
+	FROM employees
+);
+
+
+# case 7 各个部门中最高工资中最低的那个部门的最低工资
+# 1查询各部门的最高工资最低的
+SELECT MAX(salary) 
+FROM employees
+GROUP BY department_id
+ORDER BY MAX(salary) 
+LIMIT 1;
+
+# 2查询哪个部门的最高工资=1
+SELECT MIN(salary), department_id
+FROM employees
+WHERE department_id = (
+	SELECT department_id
+	FROM employees
+	GROUP BY department_id
+	ORDER BY MAX(salary) 
+	LIMIT 1
+);
+
+
+# case 8 查询平均工资最高的部门的manager的信息:last_name, department_id, email, salary
+# 1查询平均工资最高的部门编号
+SELECT department_id
+FROM employees
+GROUP BY department_id
+ORDER BY AVG(salary) DESC
+LIMIT 1;
+
+# 2 将employees和departments连接查询，筛选条件是1
+SELECT 
+  last_name,
+  d.department_id,
+  email,
+  salary 
+FROM
+  employees e 
+  INNER JOIN departments d 
+    ON d.`manager_id` = e.`employee_id` 
+WHERE d.`department_id` = 
+  (SELECT 
+    department_id 
+  FROM
+    employees 
+  GROUP BY department_id 
+  ORDER BY AVG(salary) DESC 
+  LIMIT 1) ;
+

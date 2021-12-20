@@ -399,6 +399,7 @@ GROUP BY gradeId
 HAVING MIN(age) > 20;
 
 # case 5 说出查询语句中设计到的所有的关键字，以及执行的先后顺序
+/*
 SELECT 查询列表     7
 FROM 表             1
 连接类型 JOIN 表2   2
@@ -408,3 +409,4 @@ GROUP BY 分组列表   5
 HAVING 分组后的筛选 6
 ORDER BY 排序列表   8
 LIMIT 偏移, 条目数; 9
+*/

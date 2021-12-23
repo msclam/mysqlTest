@@ -179,8 +179,8 @@ timestamp保存日期+时间
 特点：
 
 		字节		范围		时区等的影响
-datetime	               8		1000——9999	                  不受
-timestamp	4	               1970-2038	                    受
+datetime	8		1000——9999	不受
+timestamp	4	        1970-2038	受
 
 */
 

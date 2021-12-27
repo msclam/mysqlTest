@@ -110,13 +110,17 @@ SELECT * FROM account;
 
 
 #2.演示事务对于delete和truncate的处理的区别
-
+# 演示delete，支持回滚
 SET autocommit=0;
 START TRANSACTION;
-
 DELETE FROM account;
 ROLLBACK;
 
+# 演示truncate,不支持回滚（事实上删除表）
+SET autocommit=0;
+START TRANSACTION;
+TRUNCATE TABLE account;
+ROLLBACK;
 
 
 #3.演示savepoint 的使用

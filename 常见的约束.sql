@@ -170,3 +170,46 @@ ALTER TABLE emp2 ADD CONSTRAINT fk_emp2_dept2 FOREIGN KEY(dept_id) REFERENCES de
 		位置		支持的约束类型			是否可以起约束名
 列级约束：	列的后面	语法都支持，但外键没有效果	不可以
 表级约束：	所有列的下面	默认和非空不支持，其他支持	可以（主键没有效果）
+
+
+
+# 关于删除外键的问题
+SHOW INDEX FROM major;
+SHOW INDEX FROM stuinfo;
+
+ALTER TABLE stuinfo DROP FOREIGN KEY fk_stuinfo_major;
+
+# 传统方式添加外键
+ALTER TABLE stuinfo ADD CONSTRAINT fk_stu_major FOREIGN KEY(majorid) REFERENCES major(id);
+
+SELECT * FROM major;
+
+INSERT INTO major
+VALUES(1, 'java'),
+(2, 'h5'),
+(3, '大数据'),
+(4, 'html'),
+(5, 'c++'),
+(6, 'javascript');
+
+SELECT * FROM stuinfo;
+
+INSERT INTO stuinfo
+SELECT 1, 'a', '女', NULL, NULL, 1 UNION ALL
+SELECT 2, 'b', '男', NULL, NULL, 2 UNION ALL
+SELECT 3, 'c', '女', NULL, NULL, 3 UNION ALL
+SELECT 4, 'd', '男', NULL, NULL, 4 UNION ALL
+SELECT 5, 'e', '女', NULL, NULL, 5 UNION ALL
+SELECT 6, 'f', '男', NULL, NULL, 6;
+
+# 删除专业3的专业
+DELETE FROM major WHERE id = 2;
+
+# 方式一： 级联删除（上一级删除，下一级删除）添加级联删除的外键
+SHOW INDEX FROM stuinfo;
+SHOW INDEX FROM major;
+ALTER TABLE stuinfo ADD CONSTRAINT fk_stuinfo_major FOREIGN KEY(majorid) REFERENCES major(id) ON DELETE CASCADE;
+ALTER TABLE stuinfo DROP FOREIGN KEY fk_stuinfo_major;		
+
+# 方式二： 级联置空（上一级删除，下一级置空）
+ALTER TABLE stuinfo ADD CONSTRAINT fk_stuinfo_major FOREIGN KEY(majorid) REFERENCES major(id) ON DELETE SET NULL;
